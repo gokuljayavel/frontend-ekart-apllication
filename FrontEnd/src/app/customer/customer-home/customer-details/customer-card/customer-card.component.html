@@ -1,0 +1,146 @@
+<div class="page-top-offset"></div>
+<div *ngIf="cardToAdd==null && !orderSuccess">
+  <div class="row">
+    <button class="btn btn-info" (click)="addNewCard()">Add New Card</button>
+  </div>
+  <br>
+
+  <h5 *ngIf="successMessage!=null && successMessage!=''" class="success-message">
+    {{successMessage}}
+  </h5>
+  <h5 *ngIf="errorMessage!=null && errorMessage!=''" class="error-message">
+    {{errorMessage}}
+  </h5>
+
+  <br>
+  <div *ngFor="let card of Cards ">
+    <!--here we have to use card.cardType for name and value-->
+    <input type="radio" id={{card.cardId}} name="payment" [value]="card.cardId" (click)="selectedCard=card" />
+    <label for={{card.cardId}}>
+      <div class="card text-dark border-primary hoverable w-750">
+        <div class="row">
+          <div class="col card-block offset-1">
+
+            <br>
+            <div *ngFor="let key of card|cardPipe">
+              {{key}}
+            </div>
+          </div>
+          <div class="col card-block offset-2">
+            <div *ngIf="selectedCard==card">
+              <label for="cvv">Please enter CVV</label>
+              <input type="text" maxlength=3 ng-pattern="[0-9]{3}" class="form-control" name="card.cvv" id="cvv"
+                required [(ngModel)]="cvv" />
+              <div>
+                <button class="btn btn-primary" (click)="verifyCvv()">
+                  Select Card
+                </button>
+                <div class="success-message" *ngIf="cvvSuccessMessage!=null">
+                  Card Verified
+                </div>
+                <div class="field-error-message" *ngIf="cvvErrorMessage!=null">
+                  You've entered wrong CVV
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <br>
+        </div>
+        <br>
+      </div>
+    </label>
+  </div>
+  <input type="radio" id="COD" name='payment' value='COD' (click)="cashOnDelivery()"/>
+  <label for="COD">Cash On Delivery</label>
+
+  <br>
+  <br>
+</div>
+
+<div *ngIf="displayPlaceOrder && !orderSuccess">
+  <button (click)="placeOrder()" class="btn btn-success">
+    Place Order
+  </button>
+</div>
+
+<div *ngIf="orderSuccess">
+  Your order was successfully placed with order number {{orderNumber}}.
+  <br>
+  Click to continue shopping!
+  <br>
+  <br>
+  <button [routerLink]="['/home/products']" class="btn btn-success">
+    Shop More
+  </button>
+  <div *ngIf="paymentThrough.valueOf() != 'CASH_ON_DELIVERY'">
+    <app-invoice></app-invoice>
+  </div>
+</div>
+
+<div class="row" *ngIf="cardToAdd!=null">
+  <div class="col-6 offset-3 form-bg-light">
+    <form class="form" #addForm="ngForm">
+
+      <div class="form-group">
+        <label for="cardType">Card Type</label>
+        <select [(ngModel)]="cardToAdd.cardType" class="form-control" #cardType="ngModel" name="cardType" id="cardType"
+          required>
+          <option value="CREDIT_CARD">Credit Card</option>
+          <option value="DEBIT_CARD">Debit Card</option>
+        </select>
+        <div class="field-error-message" *ngIf="cardType.invalid && cardType.dirty">
+          Select any one card type
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input type="text" pattern="[0-9]{16}" name="cardNumber" class="form-control" id="cardNumber"
+          [(ngModel)]="cardToAdd.cardNumber" required #cardNumber="ngModel">
+        <div class="field-error-message" *ngIf="cardNumber.invalid && cardNumber.dirty">
+          Card Number must be 16 digits
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input type="password" pattern="[0-9]{3}" name="cvv" class="form-control" id="cvv" [(ngModel)]="cardToAdd.cvv"
+          required #cvv="ngModel">
+        <div class="field-error-message" *ngIf="cvv.invalid && cvv.dirty">
+          CVV must be 3 digits
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="expiryDate">Expiry Date</label>
+        <div class="form-inline">
+          <input type="number" placeholder="MM" name="expiryDateM" class="form-control" id="expiryDateM"
+            [(ngModel)]="expm" required #expiryDate="ngModel">
+          <input type="number" placeholder="YYYY" name="expiryDateY" class="form-control" id="expiryDateY"
+            [(ngModel)]="expy" required #expiryDate="ngModel">
+        </div>
+        <div class="field-error-message" *ngIf="expErrorMessage">
+          expiry should be of future
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="nameOnCard">Name on Card</label>
+        <input type="text" pattern="[A-Za-z]+( [A-Za-z]+)*" name="nameOnCard" class="form-control" id="nameOnCard"
+          [(ngModel)]="cardToAdd.nameOnCard" required #nameOnCard="ngModel">
+        <div class="field-error-message" *ngIf="nameOnCard.invalid && nameOnCard.dirty">
+          Name can only have alphabets
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <button class="btn btn-success" [disabled]="addForm.invalid"
+          (click)="verifyExpiryDate()">Add</button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-info" (click)="cancelAdd()">Cancel</button>
+      </div>
+
+    </form>
+    <h5 class="error-message">{{errorMessage}}</h5>
+    <h5 class="success-message">{{successMessage}}</h5>
+
+  </div>
+</div>

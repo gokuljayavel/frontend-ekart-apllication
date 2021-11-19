@@ -1,0 +1,45 @@
+<div class="page-top-offset"></div>
+<div class="card mt-4" *ngIf="orderList" id="pdfInvoice" #pdfInvoice>
+    <div class="card-body  offset-1">
+    <div>
+        <strong>Customer name : </strong>{{loggedInCustomer.name}}
+    </div>
+    <div>
+        <strong>Delivery Address</strong><br>
+    {{orderaddress|address}}
+    </div>
+
+    <div>
+        <strong>Payement Method: </strong>{{orderList[0].paymentThrough}}
+    </div>
+
+    <div>
+        <strong>Order Number: </strong>{{ordNumber}}
+    </div>
+
+    <div><br>
+    <strong><h4>Products Ordered : </h4></strong>
+    <div  class="card mt-2 text-dark border-primary " *ngFor="let prod of prodList; let i=index">
+        <div class="card-body offset-1">
+        <p><strong>Product Id: </strong>{{prod.productId}}<br/>
+        <strong>Product Name:</strong> {{prod.name}}<br>
+        <strong>Product Description: </strong>{{prod.description}}<br>
+        <strong>Product Category: </strong>{{prod.category}}<br>
+        <strong>Product Brand: </strong>{{prod.brand}}<br>
+        <strong>Product Price: </strong>{{prod.price | currency:'INR':'symbol-narrow'}}<br>
+        <strong>Product Discount: </strong>{{prod.discount}}<br>
+        <strong>Product Quantity: </strong>{{prod.quantity}}<br>
+        <strong>Quantity In Order: </strong>{{orderList[i].quantity}}<br>
+        <strong>Total Price: </strong>{{orderList[i].totalPrice | currency:'INR':'symbol-narrow'}}<br>
+        <strong>Order Date: </strong>{{orderList[i].dateOfOrder | datec |date:'medium'}}<br/>
+        <strong>Delivery Date: </strong>{{orderList[i].dataOfDelivery | datec | date:'medium'}}</p></div>
+        <br/>
+    </div>
+    </div>
+
+    <div><br>
+    <strong>Grand Total: </strong>{{grandTotal | currency:'INR':'symbol-narrow'}}
+    </div>
+</div>
+</div>
+<button class ="btn btn-primary float-right" (click)="downloadAsPDF()">Download as PDF</button>

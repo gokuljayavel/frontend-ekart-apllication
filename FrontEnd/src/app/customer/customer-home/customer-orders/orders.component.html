@@ -1,0 +1,47 @@
+<div>
+    <strong> View Orders</strong>
+</div>
+<div  class="text-center table-responsive table-border" style="width: 115%">
+    <table class="table table-responsive text-center table-condensed">
+        <thead>
+            <tr>
+                <th style="text-align: center" rowspan="2"> Order Number</th>
+                <th style="text-align: center" rowspan="2">Date And Time Of Order</th>
+                <th style="text-align: center" rowspan="2">Shipping Adress </th>
+                <th style="text-align: center" rowspan="2">Payment Through </th>
+                <th style="text-align: center" colspan="2"> Product Details</th>                  
+                <th style="text-align: center" rowspan="2"> Total Price</th>
+                <th style="text-align: center" rowspan="2">Order Status</th>
+                <th style="text-align: center" rowspan="2">Date Of Delivered </th>
+                <th style="text-align: center" rowspan="2">Invoice Downlod</th>
+            </tr>
+            <tr>
+                <th> Product Name</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+             
+                <tr *ngFor = "let order of orders | paginate: { itemsPerPage: 10, currentPage: curr}">
+                    <td class="align-middle"> {{order.orderNumber}} </td>
+                    <td class="align-middle"> {{order.dateOfOrder | datec | date:'medium'}} </td>
+                    <td class="align-middle">    {{addressList.get(order.addressId)|address}} </td>
+                    <td class="align-middle">{{order.paymentThrough.valueOf()}}</td>
+                    <!-- <div *ngFor = "let product of productlist"> -->
+                    <td class="align-middle"> {{order.product.name}}</td>
+                    <td class="align-middle"> {{order.quantity}} </td> 
+                     <td class="align-middle">{{order.totalPrice | currency:'INR':'symbol-narrow'}}</td>
+                     <td class="align-middle"> {{order.orderStatus }}</td>
+                     <td *ngIf="order.orderStatus=='DELIVERED' else failureMsg">{{order.dataOfDelivery | datec | date:'medium'}}</td>
+                     <ng-template #failureMsg>
+                        <td class="align-middle">  Not Delivered</td>
+                    </ng-template>
+                     <td class="align-middle"><button class="btn btn-info" type="button" (click)="downloadInvoice(order.orderNumber,addressList.get(order.addressId))" [disabled]="order.paymentThrough=='CASH_ON_DELIVERY' && order.orderStatus!='DELIVERED'">Download Invoice</button></td>
+                    
+                </tr>
+                
+        </tbody>
+
+    </table>
+    <pagination-controls (pageChange)="curr=$event"></pagination-controls>
+</div>
